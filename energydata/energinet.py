@@ -4,6 +4,7 @@ import re
 import datetime
 from collections import namedtuple
 from sys import intern
+import pytz
 
 
 def fetch_edh(descriptor, limit, offset=0):
