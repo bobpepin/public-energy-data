@@ -55,13 +55,33 @@ def iter_months(start_datetime, end_datetime):
         else:
             date = date.replace(year=date.year+1, month=1)
 
+
+field_mappings = {
+    'pompage': "consumption_phes",
+    'bioenergies': "production_biomass",
+    'thermique': "production_thermal",
+    'eolien': "production_wind",
+    'solaire': "production_solar",
+    'consommation': "consumption",
+    'nucleaire': "production_nuclear",
+    'ech_physiques': "import",
+    'hydraulique': "production_hydro",
+    "stockage_batterie": "consumption_battery",
+    "destockage_batterie": "production_battery",
+    "eolien_terrestre": "production_wind_onshore",
+    "eolien_offshore": "production_wind_offshore"
+}
+
 def format_record(record_info, dataset_info):
     record = {intern(k): v for k, v in record_info["fields"].items()}
     record[intern("recordid")] = record_info["recordid"]
     record[intern("record_timestamp")] = record_info["record_timestamp"]
     if "date_heure" in record and "date" in record and "heure" in record:
         utc_datetime = datetime.datetime.fromisoformat(record["date_heure"].replace("Z", ""))
-        local_date = datetime.datetime.strptime(record["date"], "%d/%m/%Y").date()
+        try:
+            local_date = datetime.datetime.strptime(record["date"], "%d/%m/%Y").date()
+        except ValueError:
+            local_date = datetime.datetime.strptime(record["date"], "%Y-%m-%d").date()
         local_time = datetime.datetime.strptime(record["heure"], "%H:%M").time()
         local_datetime = datetime.datetime.combine(local_date, local_time)
         tz_offset = datetime.timezone(local_datetime - utc_datetime)
@@ -80,6 +100,12 @@ def format_record(record_info, dataset_info):
         end_datetime = tz.localize(compute_end_datetime(local_datetime, dataset_info))
         record[intern("start_datetime")] = start_datetime.isoformat()
         record[intern("end_datetime")] = end_datetime.isoformat()        
+    if "code_insee_region" in record:
+        code = record["code_insee_region"]
+        record["region_code"] = f"fr_reg_{code}"
+    for f1, f2 in field_mappings.items():
+        if f1 in record:
+            record[f2] = record[f1]
     return record
 
 def fetch_odre_dt_facet(descriptor, date_heure, dataset_info):
