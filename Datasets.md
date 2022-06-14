@@ -21,26 +21,32 @@ Column names:
 
 Datasets
 ========
+
+Implemented
+----------------
 - France Regions Consumption (`odre` mnodule)
 - Energinet Municipalities Consumption (`energinet` module)
-
-
-TODO
--------
-
-- DMI
 - Energinet Municipalities Production
 - France Regions (?) Production
+
+
+In Progress (Notebooks)
+-----------------------------
+- Energinet Network Topology
+- Nordpool
+- EPEX
+
+
+Planned
+----------
+- DMI
 - ODRE Network topology (electricity & gas)
 - German MaST (?)
 - ENTSO-E
-- Energinet Network Topology
 - Danmarks Statistic
 - France Population 
 - France Climate
 - World Bank Energy Networks / Data
-- Nordpool
-- EPEX
 - US Data State-level production and consumption
 - US population
 - US climate
