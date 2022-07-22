@@ -52,6 +52,8 @@ Planned
 - US population
 - US climate
 - US grid topology
+- Mineral prices (Lithum, Copper, Cobalt)
+- Mineral recycling
 
 
 Design Principles

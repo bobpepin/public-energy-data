@@ -16,7 +16,7 @@
 <div id="map"></div>
 
 <script>
-var map = L.map('map')
+var map = L.map('map', { renderer: L.canvas() })
     
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
