@@ -132,7 +132,7 @@ class EnerginetNetdata:
     def fetch_metadata(self):
         return {"type": "graph"}
 
-    def fetch(self):
+    def fetch_graph(self):
         connection_points = fetch_connectionpoints()
         wb = fetch_netdata_workbook()
         energy_grid = build_graph(connection_points, wb)
