@@ -1,14 +1,16 @@
 # public-energy-data
-Unified Python API for accessing public data from the energy sector
 
-This package aims to provide a unified Python API to publicly available data from TSOs and similar organizations 
-to enable the development of data science tools that work across countries and providers.
+This package provides a unified Python API to access publicly available data from TSOs and similar organizations. 
+
+The goal is to enable the development of open source data science tools that work across countries and providers.
 
 
 Example
 =======
 API: 
 ```
+import energydata.odre
+
 descriptor = {
     "dataset": "consommation-quotidienne-brute-regionale",
     "start_datetime": "2018-03-01",
@@ -19,21 +21,22 @@ record_iter = dataset.fetch_records()
 records = list(record_iter)
 ```
 
+See the notebooks in the `notebooks` folder for more examples.
+
 
 Datasets
 ========
 
 Implemented
 ----------------
-- France Regions Consumption (`odre` mnodule)
+- France Regions Consumption (`odre` module)
 - Energinet Municipalities Consumption (`energinet` module)
 - Energinet Municipalities Production
 - France Regions (?) Production
-
+- Energinet Network Topology (`energinet_netdata` module)
 
 In Progress (Notebooks)
 -----------------------------
-- Energinet Network Topology
 - Nordpool
 - EPEX
 
