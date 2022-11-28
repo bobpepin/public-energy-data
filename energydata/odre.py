@@ -71,7 +71,9 @@ field_mappings = {
     "stockage_batterie": "consumption_battery",
     "destockage_batterie": "production_battery",
     "eolien_terrestre": "production_wind_onshore",
-    "eolien_offshore": "production_wind_offshore"
+    "eolien_offshore": "production_wind_offshore",
+    "consommation_brute_electricite_rte": "consumption_electricity",
+    "consommation_brute_gaz_totale": "consumption_gaz"
 }
 
 def format_record(record_info, dataset_info):
@@ -84,6 +86,8 @@ def format_record(record_info, dataset_info):
             local_date = datetime.datetime.strptime(record["date"], "%d/%m/%Y").date()
         except ValueError:
             local_date = datetime.datetime.strptime(record["date"], "%Y-%m-%d").date()
+            if abs(local_date - utc_datetime.date()).days > 1:
+                local_date = datetime.datetime.strptime(record["date"], "%Y-%d-%m").date()
         local_time = datetime.datetime.strptime(record["heure"], "%H:%M").time()
         local_datetime = datetime.datetime.combine(local_date, local_time)
         tz_offset = datetime.timezone(local_datetime - utc_datetime)
