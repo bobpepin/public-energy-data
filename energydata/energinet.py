@@ -58,7 +58,7 @@ def fetch_metadata(descriptor):
     column_names = [intern(x) for x in column_names]
     return {
         "fields": column_names,
-        "total": total
+        "records_total": total
     }
 
 def fetch(descriptor, chunk_size=8192):

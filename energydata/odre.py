@@ -14,6 +14,25 @@ physical_timesteps = {
     "Journalier": 24*60*60
 }
 
+field_mappings = {
+    'pompage': "consumption_phes",
+    'bioenergies': "production_biomass",
+    'thermique': "production_thermal",
+    'eolien': "production_wind",
+    'solaire': "production_solar",
+    'consommation': "consumption",
+    'nucleaire': "production_nuclear",
+    'ech_physiques': "import",
+    'hydraulique': "production_hydro",
+    "stockage_batterie": "consumption_battery",
+    "destockage_batterie": "production_battery",
+    "eolien_terrestre": "production_wind_onshore",
+    "eolien_offshore": "production_wind_offshore",
+    "consommation_brute_electricite_rte": "consumption_electricity",
+    "consommation_brute_gaz_totale": "consumption_gaz"
+}
+
+
 def compute_end_datetime(start_datetime, dataset_info):
     time_step_name = dataset_info["metas"]["pas-temporel"]
     if time_step_name in physical_timesteps:
@@ -34,6 +53,7 @@ def compute_end_datetime(start_datetime, dataset_info):
     else:
         raise ValueError(f"Unsupported time step: {time_step_name!r}")
 
+        
 def fetch_dataset_info(descriptor):
     dataset = descriptor["dataset"]
     url = f"https://odre.opendatasoft.com/api/datasets/1.0/{dataset}/"
@@ -41,12 +61,23 @@ def fetch_dataset_info(descriptor):
         data = json.load(response)
     return data
 
+
 def extract_metadata(dataset_info):
+    fields = [x["name"] for x in dataset_info["fields"]]
+    for f1, f2 in field_mappings.items():
+        if f1 in fields:
+            fields.append(f2)    
+    if "code_insee_region" in fields:
+        fields.append("region_code")
+    if "date" in fields:
+        fields.append("start_datetime")
+        fields.append("end_datetime")
     metadata = {
-        "fields": dataset_info["fields"],
-        "dataset_records_count": dataset_info["metas"]["records_count"]
+        "fields": fields,
+        "records_total": dataset_info["metas"]["records_count"]
     }
     return metadata
+
 
 def iter_months(start_datetime, end_datetime):
     date = datetime.datetime(start_datetime.year, start_datetime.month, 1)
@@ -57,25 +88,7 @@ def iter_months(start_datetime, end_datetime):
         else:
             date = date.replace(year=date.year+1, month=1)
 
-
-field_mappings = {
-    'pompage': "consumption_phes",
-    'bioenergies': "production_biomass",
-    'thermique': "production_thermal",
-    'eolien': "production_wind",
-    'solaire': "production_solar",
-    'consommation': "consumption",
-    'nucleaire': "production_nuclear",
-    'ech_physiques': "import",
-    'hydraulique': "production_hydro",
-    "stockage_batterie": "consumption_battery",
-    "destockage_batterie": "production_battery",
-    "eolien_terrestre": "production_wind_onshore",
-    "eolien_offshore": "production_wind_offshore",
-    "consommation_brute_electricite_rte": "consumption_electricity",
-    "consommation_brute_gaz_totale": "consumption_gaz"
-}
-
+            
 def format_record(record_info, dataset_info):
     record = {intern(k): v for k, v in record_info["fields"].items()}
     record[intern("recordid")] = record_info["recordid"]
@@ -114,6 +127,7 @@ def format_record(record_info, dataset_info):
             record[f2] = record[f1]
     return record
 
+
 def fetch_odre_dt_facet(descriptor, date_heure, dataset_info):
     base_url = "https://odre.opendatasoft.com/api/records/1.0/download/"
     parameters = {
@@ -129,6 +143,7 @@ def fetch_odre_dt_facet(descriptor, date_heure, dataset_info):
         data = json.load(response)
         for record in data:
             yield format_record(record, dataset_info)
+    
     
 def fetch_odre(descriptor):
     dataset_info = fetch_dataset_info(descriptor)
