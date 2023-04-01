@@ -76,7 +76,8 @@ def fetch(descriptor, chunk_size=8192):
                 this_month.month % 12 + 1,
                 1
             )
-            record[intern("datetime_start")] = this_month.
+            record[intern("datetime_start")] = this_month.isoformat()
+            record[intern("datetime_end")] = next_month.isoformat()
         if "MunicipalityNo" in record:
             municipality = record["MunicipalityNo"]
             record[intern("region_code")] = f"dk_mun_{municipality}"
