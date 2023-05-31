@@ -52,7 +52,7 @@ class ESett:
             timestamp = row["timestamp"]
             is_dst = timestamp != prev_timestamp
             dt = datetime.datetime.fromisoformat(timestamp)
-            start_loc = tz.localize(dt, is_dst=is_dst)
+            start_loc = tz.localize(dt, is_dst=is_dst) # is_dst is ignored unless there is ambiguity
             end_loc = (start_loc.astimezone(datetime.timezone.utc) + datetime.timedelta(hours=1)).astimezone(tz)
             record[intern("datetime_start")] = start_loc.isoformat()
             record[intern("datetime_end")] = end_loc.isoformat()
