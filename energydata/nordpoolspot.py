@@ -57,8 +57,8 @@ class NordpoolSpot:
         if descriptor.get("dataset") != "intraday":
             raise ValueError('descriptor["dataset"] needs to have value "intraday"')
         step = datetime.timedelta(days=1)
-        start_date = datetime.date.fromisoformat(descriptor["start_datetime"])
-        end_date = datetime.date.fromisoformat(descriptor["end_datetime"])
+        start_date = datetime.datetime.fromisoformat(descriptor["start_datetime"])
+        end_date = datetime.datetime.fromisoformat(descriptor["end_datetime"])
         dates = [start_date + i*step for i in range(int((end_date - start_date)/step)+1)]
         self.request_dates = [date.isoformat() for date in dates]
         self.zone = descriptor["zone"]

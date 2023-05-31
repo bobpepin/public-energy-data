@@ -12,16 +12,32 @@ def fetch_esett(descriptor):
     end_dt = datetime.datetime.fromisoformat(descriptor["end_datetime"])
     end_str = end_dt.astimezone(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
+    mba_codes = fetch_mba_codes()
+    mba_code = mba_codes[descriptor["MBA"]]
+    
     query = urllib.parse.urlencode({
         "start": start_str,
         "end": end_str,
-        "MBA": descriptor["MBA"]
+        "mba": mba_code
     })
-    url = f"https://opendata.esett.com/api/EXP14/{descriptor['dataset']}?{query}"    
-    with urllib.request.urlopen(url) as fh:
+    url = f"https://api.opendata.esett.com/EXP14/{descriptor['dataset']}?{query}"
+    headers = {"Accept": "application/json"}
+    request = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(request) as fh:
         data = json.load(fh)
     return data
 
+def fetch_mba_codes():
+    url = "https://api.opendata.esett.com/EXP14/MBAOptions"
+    headers = {"Accept": "application/json"}
+    request = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(request) as fh:
+        data = json.load(fh)
+    mba_codes = {}
+    for country in data:
+        for mba in country["mbas"]:
+            mba_codes[mba["name"]] = mba["code"]
+    return mba_codes
 
 class ESett:
     def __init__(self, descriptor):
