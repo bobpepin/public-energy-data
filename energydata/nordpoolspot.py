@@ -43,8 +43,8 @@ numerical_columns = ["High", "Low", "Last", "Avg", "Volume"]
 def format_row(row):
     record = {}
     dt_start, dt_end = extract_dates(row["Product"])
-    record["start_datetime"] = dt_start
-    record["end_datetime"] = dt_end
+    record["datetime_start"] = dt_start
+    record["datetime_end"] = dt_end
     for col, val in row.items():
         if col in numerical_columns:
             val = float(val.replace(",", "."))
