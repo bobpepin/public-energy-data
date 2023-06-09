@@ -82,10 +82,12 @@ def fetch(descriptor, chunk_size=8192):
             municipality = record["MunicipalityNo"]
             record[intern("region_code")] = f"dk_mun_{municipality}"
         if "OffshoreWindLt100MW_MWh" in record or "OffshoreWindGe100MW_MWh" in record:
-            record["production_wind_offshore"] = (
-                record.get("OffshoreWindLt100MW_MWh", 0) +
-                record.get("OffshoreWindGe100MW_MWh", 0)
-            )
+            val = 0
+            if record.get("OffshoreWindLt100MW_MWh", 0) is not None:
+                val += record.get("OffshoreWindLt100MW_MWh", 0)
+            if record.get("OffshoreWindGe100MW_MWh", 0) is not None:
+                val += record.get("OffshoreWindGe100MW_MWh", 0)
+            record["production_wind_offshore"] = val
         if "CentralPower" in record or "DecentralPower" in record:
             val = 0
             if record.get("CentralPower", 0) is not None:
@@ -96,6 +98,8 @@ def fetch(descriptor, chunk_size=8192):
         for f1, f2 in field_mappings.items():
             if f1 in record:
                 val = record[f1]
+                if val is None:
+                    val = 0
                 if f1.endswith("kWh") and val is not None:
                     val *= 1e-3
                 record[f2] = val
